@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Chatty Chat Chat";
+}
+
+<script type="text/javascript">
+
+    $(function () {
+
+        $(".btn-submit").click(function () {
+
+            //send chat message to server
+            $.ajax({
+                type: "POST",
+                url: "/chat/PostMessage",
+                data: { message: $("#txtMessage").val() }
+            });
+
+            //reset textbox
+            $("#txtMessage").val("");
+            
+         });
+
+        (function longPoll() {
+
+            $.ajax({
+                type: "GET",
+                url: "chat/LongPoll",
+                cache: false,    // defeat the 304 status that plagues IE
+                success: function (message) {
+                    //when response is recieved, update list and call this function again
+                    $("<li>").text(message).appendTo("#messages");
+
+                },
+                error: function( jqXHR ,  textStatus,  errorThrown){
+                    console.log("error: " + errorThrown);
+                },
+                complete: longPoll
+            });
+
+        })();  // immediately evaluated function
+
+    });
+
+</script>
+
+<h2>Chatty Chat Chat</h2>
+
+<ul id="messages"></ul>
+
+Say something: <input type="text" id="txtMessage" />
+               <button class="btn-submit">Submit</button>
+
+ 
+
+

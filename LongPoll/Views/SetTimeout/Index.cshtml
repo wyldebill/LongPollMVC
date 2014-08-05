@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "setTimeout";
+}
+<h1>Poll - setTimeout example</h1>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".btn-submit").click(function () {
+            
+            //send chat message to server
+            $.ajax({
+                type: "POST",
+                url: "setTimeout/PostMessage",
+                data: { message: $("#txtMessage").val() }
+            });
+
+            //reset textbox
+            $("#txtMessage").val("");
+            
+        });
+
+        (function poll() {
+            setTimeout(function () {
+                $.ajax({
+                    url: "setTimeout/GetChats",
+                    success: function (chats) {
+                        $("#messages").html(chats);
+                        poll();
+                    }
+                });
+            }, 3000);
+        })();
+
+    });
+
+</script>
+
+<div id="messages"></div>
+
+Say something: <input type="text" id="txtMessage" />
+               <button class="btn-submit">Submit</button>
+
